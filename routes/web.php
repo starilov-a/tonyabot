@@ -13,4 +13,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/webhook', [\App\Http\Controllers\TelegramController::class, 'index']);
+Route::get('/testbot', [\App\Http\Controllers\TelegramController::class, 'index']);
+

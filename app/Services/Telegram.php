@@ -8,10 +8,9 @@ use Illuminate\Http\Request;
 
 class Telegram
 {
-    private $webhook = 'https://api.telegram.org/bot5558278236:AAHI-LWRav9eV33TX1As37Fq34hXSq5zlRI/setWebhook?url=https://rougebot.ru/webhook';
-    private $url = 'https://api.telegram.org/bot';
-    private $apikey;
-    private $http;
+    protected $url = 'https://api.telegram.org/bot';
+    protected $apikey;
+    protected $http;
     private $request;
     private $chatId;
     private $message;
@@ -29,25 +28,18 @@ class Telegram
         $this->message =  $this->request->message->text;
     }
 
-    public function sendMessage($message, $buttons = false)
+    public function sendMessage($message, $chat, $replyTo = false,$buttons = false)
     {
         $data = [
-            'chat_id' => $this->chatId,
+            'chat_id' => $chat,
             'text' => $message,
-            'parse_mode' => 'html'
+            'parse_mode' => 'html',
         ];
+        if ($replyTo)
+            $data['reply_to_message_id'] = $replyTo;
         if($buttons)
             $data['reply_markup'] = $buttons;
 
         return $this->http::post($this->url.$this->apikey.'/sendMessage', $data);
-    }
-
-    public function getUpdates($chatId)
-    {
-        $data = [
-            'chat_id' => $chatId
-        ];
-
-        return $this->http::get($this->url.$this->apikey.'/getUpdates', $data);
     }
 }
