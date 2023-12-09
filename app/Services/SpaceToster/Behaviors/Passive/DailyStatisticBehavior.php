@@ -15,8 +15,8 @@ use Carbon\Carbon;
 class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements MessageBehavior
 {
     protected $code = 'dailystat';
-    protected $workHour = 23;
-    protected $refreshHour = 12;
+    protected $workHour = 0;
+    protected $refreshHour = 0;
 
     public function message(Telegram $telegram): void
     {
@@ -29,40 +29,55 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
 
             //подсчет кол-во сообщений
             $messages = Message::whereDate('created_at', Carbon::today())->where('chat_id', $chat->id)->get();
-            $messageOutput .= 'сообщений за сегодня: '. $messages->count()."\r\n";
+            $messageOutput .= 'Сообщений за сегодня: '. $messages->count()."\r\n";
 
             //топ слов
-            $messageOutput .= 'топ слов: '."\r\n";
+            $messageOutput .= 'Топ слов: '."\r\n";
             $wordStats = [];
             foreach ($messages as $message) {
                 $words = explode(' ', $message->text);
                 foreach ($words as $word){
                     if(!isset($wordStats[$word]))
-                        $wordStats[$word] = 1;
+                        $wordStats[$word] = 0;
                     $wordStats[$word]++;
                 }
             }
-            arsort($wordStats);
-            $i = 0;
-            foreach ($wordStats as $word => $count) {
-                $messageOutput .= $i+1 . '. ' . $word . ' - ' . $count ."\r\n";
-                $i++;
-                if ($i == 5)
-                    break;
+            if (!empty($wordStats)) {
+                arsort($wordStats);
+                $i = 0;
+                foreach ($wordStats as $word => $count) {
+                    $messageOutput .= $i+1 . '. ' . $word . ' - ' . $count ."\r\n";
+                    $i++;
+                    if ($i == 5)
+                        break;
+                }
+            } else {
+                $messageOutput .= '«Среди черных дыр и квазаров распространяется звук тишины...»'."\r\n\r\n";
             }
 
-            //самый активный участник беседы
 
+            //самый активный участник беседы
+            $userTopMessage = [];
             foreach ($messages as $message) {
                 if(!isset($userTopMessage[$message->telegram_user_id]))
                     $userTopMessage[$message->telegram_user_id] = 1;
                 $userTopMessage[$message->telegram_user_id]++;
             }
-            arsort($userTopMessage);
-            $userId = array_key_first($userTopMessage);
-            $user = TelegramUser::find($userId);
+            if (!empty($userTopMessage)) {
+                arsort($userTopMessage);
+                $userId = array_key_first($userTopMessage);
+                $user = TelegramUser::find($userId);
+                $messageOutput .= 'Самый активный: @'.$user->username."\r\n\r\n";
+            }
 
-            $messageOutput .= 'Самый активный: @'.$user->username."\r\n";
+            //Клоун беседы
+
+            $users = $chat->telegramUsers()->get();
+
+            if ($users->isNotEmpty()) {
+                $userRand = $users->random();
+                $messageOutput .= 'Ипостер сегодня: @'.$userRand->username."\r\n";
+            }
 
             $telegram->sendMessage($messageOutput, $chat->id);
             $messageOutput = '';

@@ -30,6 +30,9 @@ class TelegramUpdates extends Telegram
     }
 
     protected function saveUpdatesData() {
+        if (!isset($this->telegramUpdates->result))
+            return;
+
         foreach ($this->telegramUpdates->result as $update) {
             if (!isset($update->message)){
                 continue;
@@ -38,14 +41,14 @@ class TelegramUpdates extends Telegram
                 'id' => $update->update_id
             ]);
             if (isset($update->message->text) || isset($update->message->photo)) {
-                Chat::firstOrCreate(['id' => $update->message->chat->id],
+                $chat = Chat::firstOrCreate(['id' => $update->message->chat->id],
                     [
                         'id' => $update->message->chat->id,
                         'title' => $update->message->chat->title,
                         'type' => $update->message->chat->type
                     ]
                 );
-                TelegramUser::firstOrCreate(['id' => $update->message->from->id],
+                $telegramUser = TelegramUser::firstOrCreate(['id' => $update->message->from->id],
                     [
                         'id' => $update->message->from->id,
                         'first_name' => $update->message->from->first_name,
@@ -54,6 +57,10 @@ class TelegramUpdates extends Telegram
                         'is_bot' => $update->message->from->is_bot
                     ]
                 );
+                
+                if (empty($chat->telegramUsers()->find($telegramUser->id)))
+                    $chat->telegramUsers()->attach($telegramUser->id);
+
                 Message::firstOrCreate(['id' => $update->message->message_id],
                     [
                         'id' => $update->message->message_id,

@@ -15,6 +15,6 @@ class TelegramUser extends Model
 
     public function chats()
     {
-        return $this->hasMany(Chat::class);
+        return $this->belongsToMany(Chat::class);
     }
 }
