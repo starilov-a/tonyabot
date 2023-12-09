@@ -4,10 +4,15 @@
 namespace App\Services\SpaceToster\Behaviors\Passive;
 
 
-abstract class AbstractStaticPassiveBehavior extends \App\Services\SpaceToster\Behaviors\Behavior
+abstract class AbstractStaticPassiveBehavior extends AbstractPassiveBehavior
 {
-    protected function refreshCooldown($status): void
+    public function reasonToMessage(): bool
     {
-        $this->behaviorModel->update(['date' => time(), 'status' => $status]);
+        if (!$this->checkCooldown())
+            return false;
+        if (!$this->checkLogic())
+            return false;
+
+        return true;
     }
 }

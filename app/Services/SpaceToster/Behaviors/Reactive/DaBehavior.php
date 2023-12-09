@@ -33,17 +33,6 @@ class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
         $this->refreshCooldown($update_id);
     }
 
-    public function reasonToMessage(): bool
-    {
-        if (!$this->checkCooldown())
-            return false;
-        if (!$this->checkIssetMessages())
-            return false;
-        if (!$this->checkLogic())
-            return false;
-        return true;
-    }
-
     protected function checkLogic(): bool
     {
         foreach ($this->behaviorMessage as $message) {

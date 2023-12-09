@@ -15,8 +15,8 @@ use Carbon\Carbon;
 class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements MessageBehavior
 {
     protected $code = 'dailystat';
-    protected $workHour = 0;
-    protected $refreshHour = 0;
+    protected $workHour = 22;
+    protected $refreshHour = 4;
 
     public function message(Telegram $telegram): void
     {
@@ -84,16 +84,6 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
         }
 
         $this->refreshCooldown(0);
-    }
-
-    public function reasonToMessage(): bool
-    {
-        if (!$this->checkCooldown())
-            return false;
-        if (!$this->checkLogic())
-            return false;
-
-        return true;
     }
 
     protected function checkLogic(): bool
