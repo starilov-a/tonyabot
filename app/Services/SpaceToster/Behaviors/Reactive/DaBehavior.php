@@ -19,13 +19,13 @@ class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
         if (!$this->checkLogicStatus)
             return;
 
-        $messageOutput = 'Меня заставляли это делать...';
-        foreach ($this->behaviorMessage as $message) {
+        $messageOutput = 'Меня заставили это делать...';
+        foreach ($this->behaviorMessages as $message) {
             if (in_array($message->text,$this->dictionary)) {
                 $chat = $message->chat->id;
                 $message_id = $message->id;
                 $update_id = $message->telegram_update_id;
-                $messageOutput = 'Пизда';
+                $messageOutput = 'пизда';
                 break;
             }
         }
@@ -35,7 +35,7 @@ class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
 
     protected function checkLogic(): bool
     {
-        foreach ($this->behaviorMessage as $message) {
+        foreach ($this->behaviorMessages as $message) {
             if (in_array($message->text, $this->dictionary)) {
                 return $this->checkLogicStatus = true;
             }

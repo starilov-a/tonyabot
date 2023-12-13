@@ -11,7 +11,7 @@ abstract class Behavior
 {
     protected $code = 'behavior';
     protected $behaviorModel;
-    protected $behaviorMessage;
+    protected $behaviorMessages;
     protected $checkLogicStatus = false;
 
 
@@ -30,7 +30,7 @@ abstract class Behavior
 
     protected function refreshCooldown($update_id): void
     {
-        $this->behaviorModel->update(['date' => time() + $this->behaviorModel->cooldown, 'telegram_update_id' => $update_id]);
+        $this->behaviorModel->update(['date' => time(), 'telegram_update_id' => $update_id]);
     }
 
     abstract protected function checkLogic(): bool;
