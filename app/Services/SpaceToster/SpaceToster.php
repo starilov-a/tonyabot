@@ -7,6 +7,7 @@ namespace App\Services\SpaceToster;
 use App\Services\SpaceToster\Behaviors\Passive\DailyStatisticBehavior;
 use App\Services\SpaceToster\Behaviors\Reactive\DaBehavior;
 use App\Services\SpaceToster\Behaviors\Reactive\HorrorStatusBehavior;
+use App\Services\SpaceToster\Behaviors\Reactive\ManyMassageBehavior;
 use App\Services\Telegram;
 
 class SpaceToster
@@ -18,6 +19,7 @@ class SpaceToster
     {
         //init behaviorsData;
         $this->behaviors['reactive'][] = new DaBehavior();
+        $this->behaviors['reactive'][] = new ManyMassageBehavior();
 //        $this->behaviors['reactive'][] = new HorrorStatusBehavior();
         $this->behaviors['passive'][] = new DailyStatisticBehavior();
     }

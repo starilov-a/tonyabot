@@ -9,7 +9,7 @@ class Behavior extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['telegram_update_id', 'date', 'status'];
+    protected $fillable = ['telegram_update_id', 'date', 'status', 'cooldown'];
 
     public function message()
     {

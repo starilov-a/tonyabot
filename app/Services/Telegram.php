@@ -42,4 +42,10 @@ class Telegram
 
         return $this->http::post($this->url.$this->apikey.'/sendMessage', $data);
     }
+
+    public function sendVideo($video, $videoName, $chat)
+    {
+        return $this->http::attach('video', $video, $videoName)
+            ->post($this->url.$this->apikey.'/sendVideo', ['chat_id' => $chat]);
+    }
 }
