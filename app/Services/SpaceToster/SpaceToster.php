@@ -20,7 +20,7 @@ class SpaceToster
         //init behaviorsData;
         $this->behaviors['reactive'][] = new DaBehavior();
         $this->behaviors['reactive'][] = new ManyMassageBehavior();
-//        $this->behaviors['reactive'][] = new HorrorStatusBehavior();
+        $this->behaviors['reactive'][] = new HorrorStatusBehavior();
         $this->behaviors['passive'][] = new DailyStatisticBehavior();
     }
 

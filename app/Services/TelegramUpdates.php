@@ -57,7 +57,7 @@ class TelegramUpdates extends Telegram
                         'is_bot' => $update->message->from->is_bot
                     ]
                 );
-                
+
                 if (empty($chat->telegramUsers()->find($telegramUser->id)))
                     $chat->telegramUsers()->attach($telegramUser->id);
 

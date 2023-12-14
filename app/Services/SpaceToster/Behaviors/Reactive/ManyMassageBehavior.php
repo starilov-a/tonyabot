@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Services\SpaceToster\Behaviors\MessageBehavior
 {
     protected $code = 'manymassage';
-    protected $countTriggerMessage = 50;
+    protected $countTriggerMessage = 25;
     protected $timeAgo = 60*5;
 
     public function message(Telegram $telegram): void
@@ -26,7 +26,7 @@ class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Servi
     {
         if ($this->behaviorMessages->count() > $this->countTriggerMessage)
             return true;
-        false;
+        return false;
     }
 
     protected function setBehaviorMessages()
