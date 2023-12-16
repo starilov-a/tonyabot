@@ -63,7 +63,7 @@ class TelegramUpdates extends Telegram
 
                 Message::firstOrCreate(['id' => $update->message->message_id],
                     [
-                        'id' => $update->message->message_id,
+                        'message_id' => $update->message->message_id,
                         'telegram_update_id' => $update->update_id,
                         'chat_id' => $update->message->chat->id,
                         'telegram_user_id' => $update->message->from->id,

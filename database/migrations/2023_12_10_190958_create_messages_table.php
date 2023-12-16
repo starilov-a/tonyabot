@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->bigInteger('id')->primary();
+            $table->id();
+            $table->BigInteger('message_id')->unique();
             $table->BigInteger('telegram_update_id');
             $table->BigInteger('chat_id');
             $table->BigInteger('telegram_user_id');

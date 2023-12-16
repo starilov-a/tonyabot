@@ -15,6 +15,6 @@ class TelegramUpdate extends Model
 
     public function message()
     {
-        return $this->hasOne(Message::class);
+        return $this->hasOne(Message::class,'message_id');
     }
 }

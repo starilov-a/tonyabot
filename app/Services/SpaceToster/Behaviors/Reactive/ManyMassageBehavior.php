@@ -31,9 +31,10 @@ class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Servi
 
     protected function setBehaviorMessages()
     {
-        $lastUserMessage = Message::orderBy('id', 'desc')->first();
+        $lastUserMessage = Message::orderBy('message_id', 'desc')->first();
         $minAgo = time() - $this->timeAgo;
-        $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)->where('date', '>', $minAgo)->orderByDesc('id')->limit($this->countTriggerMessage + 1)->get();
+        $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)
+            ->where('date', '>', $minAgo)->orderByDesc('message_id')->limit($this->countTriggerMessage + 1)->get();
     }
 
     protected function refreshCooldown($update_id): void

@@ -9,9 +9,8 @@ class Message extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
     protected $table = 'messages';
-    protected $fillable = ['id', 'telegram_update_id', 'chat_id', 'telegram_user_id', 'text', 'date', 'photo_id'];
+    protected $fillable = ['message_id', 'telegram_update_id', 'chat_id', 'telegram_user_id', 'text', 'date', 'photo_id'];
 
     protected $countMesseages = '10';
 

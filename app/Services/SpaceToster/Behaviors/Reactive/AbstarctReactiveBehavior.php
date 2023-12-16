@@ -23,7 +23,8 @@ abstract class AbstarctReactiveBehavior extends \App\Services\SpaceToster\Behavi
 
     protected function setBehaviorMessages()
     {
-        $this->behaviorMessages = Message::where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)->orderByDesc('id')->take(10)->get();
+        $this->behaviorMessages = Message::where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)
+            ->where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)->orderByDesc('message_id')->take(10)->get();
     }
 
     public function reasonToMessage(): bool

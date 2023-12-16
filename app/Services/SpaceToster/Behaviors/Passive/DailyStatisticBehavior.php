@@ -37,6 +37,9 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
             foreach ($messages as $message) {
                 $words = explode(' ', $message->text);
                 foreach ($words as $word){
+                    //длина слова больше 1 символа
+                    if (!(strlen($word) > 2))
+                        continue;
                     if(!isset($wordStats[$word]))
                         $wordStats[$word] = 0;
                     $wordStats[$word]++;

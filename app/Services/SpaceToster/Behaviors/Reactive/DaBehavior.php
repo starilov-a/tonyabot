@@ -25,7 +25,7 @@ class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
             $text = mb_strtolower($message->text);
             if (in_array($text,$this->dictionary)) {
                 $chat = $message->chat->id;
-                $message_id = $message->id;
+                $message_id = $message->message_id;
                 $update_id = $message->telegram_update_id;
                 $messageOutput = 'пизда';
                 break;

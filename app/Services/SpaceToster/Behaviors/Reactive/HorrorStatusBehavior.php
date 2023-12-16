@@ -19,10 +19,14 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
         if (!$this->checkLogicStatus)
             return;
 
+        $lastMessage = $this->behaviorMessages->first();
         $video = Storage::disk('local')->get('public/media/videos/tryska.mp4');
-        $chat_id = $this->behaviorMessages->first()->chat_id;
+        $chat_id = $lastMessage->chat_id;
+
         $telegram->sendVideo($video,'tryska.mp4', $chat_id);
-        $this->refreshCooldown($chat_id);
+
+        $update_id = $lastMessage->telegram_update_id;
+        $this->refreshCooldown($update_id);
     }
 
     protected function checkLogic(): bool
@@ -42,8 +46,8 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
                     "content" => $message
                 ],
             ],
-            'temperature' => 0.1,
-            'max_tokens' => 10,
+            'temperature' => 1,
+            'max_tokens' => 15,
             'frequency_penalty' => -2.0,
             'presence_penalty' => -2.0,
         ]);
@@ -54,7 +58,7 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
 
         $status = strpos($data->choices[0]->message->content, '3');
 
-        if ($status != false)
+        if ($status !== false)
             return $this->checkLogicStatus = true;
 
         return false;
@@ -63,10 +67,10 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
     protected function setBehaviorMessages()
     {
         $minAgo = time() - $this->timeAgo;
-        $lastUserMessage = Message::orderBy('id', 'desc')->first();
+        $lastUserMessage = Message::orderBy('message_id', 'desc')->first();
         $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)
             ->where('date', '>', $minAgo)
             ->where('telegram_user_id', '=', $lastUserMessage->telegram_user_id)
-            ->orderByDesc('id')->take(3)->get();
+            ->orderByDesc('message_id')->take(3)->get();
     }
 }
