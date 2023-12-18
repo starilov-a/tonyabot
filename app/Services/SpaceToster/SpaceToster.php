@@ -5,6 +5,7 @@ namespace App\Services\SpaceToster;
 
 
 use App\Services\SpaceToster\Behaviors\Passive\DailyStatisticBehavior;
+use App\Services\SpaceToster\Behaviors\Reactive\CryBehavior;
 use App\Services\SpaceToster\Behaviors\Reactive\DaBehavior;
 use App\Services\SpaceToster\Behaviors\Reactive\HorrorStatusBehavior;
 use App\Services\SpaceToster\Behaviors\Reactive\LargeMessageBehavior;
@@ -22,6 +23,7 @@ class SpaceToster
         $this->behaviors['reactive'][] = new DaBehavior();
         $this->behaviors['reactive'][] = new LargeMessageBehavior();
         $this->behaviors['reactive'][] = new ManyMassageBehavior();
+        $this->behaviors['reactive'][] = new CryBehavior();
         $this->behaviors['reactive'][] = new HorrorStatusBehavior();
         $this->behaviors['passive'][] = new DailyStatisticBehavior();
     }

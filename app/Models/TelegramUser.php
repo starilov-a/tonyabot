@@ -17,4 +17,9 @@ class TelegramUser extends Model
     {
         return $this->belongsToMany(Chat::class);
     }
+
+    public function messages()
+    {
+        return $this->belongsToMany(Chat::class);
+    }
 }

@@ -30,7 +30,6 @@ abstract class Behavior
 
     protected function refreshCooldown($update_id): void
     {
-        dump($update_id);
         $this->behaviorModel->update(['date' => time(), 'telegram_update_id' => $update_id]);
     }
 

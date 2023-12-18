@@ -52,6 +52,12 @@ return [
     */
 
     'channels' => [
+        'gptanswers' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/gptanswers.log'),
+            'replace_placeholders' => true,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

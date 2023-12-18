@@ -7,12 +7,12 @@ namespace App\Services\SpaceToster\Behaviors\Reactive;
 use App\Models\Message;
 use App\Services\Telegram;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Orhanerday\OpenAi\OpenAi;
 
-class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Services\SpaceToster\Behaviors\MessageBehavior
+class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\SpaceToster\Behaviors\MessageBehavior
 {
-    protected $code = 'horrorstatus';
+
+    protected $code = 'cryman';
     protected $timeAgo = 30;
 
     public function message(Telegram $telegram): void
@@ -21,18 +21,19 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
             return;
 
         $lastMessage = $this->behaviorMessages->first();
-        $video = Storage::disk('local')->get('public/media/videos/tryska.mp4');
-        $chat_id = $lastMessage->chat_id;
 
-        $telegram->sendVideo($video,'tryska.mp4', $chat_id);
-
+        $messageOutput = '@' . $lastMessage->telegramUser->username.', что закибербулили тебя, да? ну я не знаю, поплачь что ли';
+        $chat = $lastMessage->chat_id;
         $update_id = $lastMessage->telegram_update_id;
+
+        $telegram->sendMessage($messageOutput, $chat);
         $this->refreshCooldown($update_id);
     }
 
     protected function checkLogic(): bool
     {
         $message = $this->behaviorMessages->implode('text','. ');
+
         if (mb_strlen($message) < 200)
             return false;
 
@@ -42,7 +43,7 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
             'messages' => [
                 [
                     "role" => "system",
-                    "content" => "Определи эмоцию страха и дай один из ответов:3 - страшно, 2 - тревожно, 1 - нейтрально. Дай короткий ответ:"
+                    "content" => "Определи эмоцию грусти в сообщении и дай один из ответов:3 - расстроен, 2 - нейтрально, 1 - весело. Дай короткий ответ:"
                 ],
                 [
                     "role" => "user",
@@ -59,13 +60,11 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
         if (!isset($data->choices))
             return false;
 
-        Log::channel('gptanswers')->info('GPT all answer for horrorstatus:"' . $data->choices[0]->message->content .
+        Log::channel('gptanswers')->info('GPT all answer for cryman:"' . $data->choices[0]->message->content .
             '"; User "' . $this->behaviorMessages->first()->telegramUser->username .
-        '"; Message: "'.$message.'"');
+            '"; Message: "'.$message.'"');
 
-        $status = strpos($data->choices[0]->message->content, '3');
-
-        if ($status !== false || strpos($data->choices[0]->message->content, 'страшно'))
+        if (strpos($data->choices[0]->message->content, '3') !== false || strpos($data->choices[0]->message->content, 'расстроен'))
             return $this->checkLogicStatus = true;
 
         return false;
@@ -78,6 +77,6 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
         $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)
             ->where('date', '>', $minAgo)
             ->where('telegram_user_id', '=', $lastUserMessage->telegram_user_id)
-            ->orderByDesc('message_id')->take(3)->get();
+            ->orderByDesc('message_id')->take(1)->get();
     }
 }

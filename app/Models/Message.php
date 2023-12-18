@@ -21,7 +21,12 @@ class Message extends Model
 
     public function telegramUpdate()
     {
-        return $this->hasOne(TelegramUpdate::class);
+        return $this->belongsTo(TelegramUpdate::class);
+    }
+
+    public function telegramUser()
+    {
+        return $this->belongsTo(TelegramUser::class);
     }
 
     public function getLastMessages()

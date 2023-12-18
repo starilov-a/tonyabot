@@ -15,7 +15,7 @@ class LargeMessageBehavior extends AbstarctReactiveBehavior implements \App\Serv
     protected function checkLogic(): bool
     {
         $message = $this->behaviorMessages->first();
-        if (strlen($message) > 300)
+        if (mb_strlen($message->text) > 300)
             return $this->checkLogicStatus = true;
 
         return false;
@@ -39,6 +39,6 @@ class LargeMessageBehavior extends AbstarctReactiveBehavior implements \App\Serv
 
     protected function setBehaviorMessages()
     {
-        $this->behaviorMessages = collect([Message::where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)->orderBy('message_id', 'desc')->first()]);
+        $this->behaviorMessages = Message::where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)->orderBy('message_id', 'desc')->get();
     }
 }
