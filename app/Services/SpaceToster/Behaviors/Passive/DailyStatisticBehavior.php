@@ -106,7 +106,7 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
                 arsort($wordStats);
                 $i = 0;
                 foreach ($wordStats as $word => $count) {
-                    $messageOutput .= $i+1 . '. ' . $word . ' - ' . $count ."\r\n";
+                    $messageOutput .= $i+1 . '. ' . $word . ' - ' . $count ."\r\n\r\n";
                     $i++;
                     if ($i == 5)
                         break;
@@ -127,7 +127,7 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
                 arsort($userTopMessage);
                 $userId = array_key_first($userTopMessage);
                 $user = TelegramUser::find($userId);
-                $messageOutput .= 'Самый активный: @'.$user->username."\r\n\r\n";
+                $messageOutput .= 'Самый активный: @'.$user->username."\r\n";
             }
 
             //Клоун беседы
@@ -136,7 +136,7 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
 
             if ($users->isNotEmpty()) {
                 $userRand = $users->random();
-                $messageOutput .= 'Ипостер сегодня: @'.$userRand->username."\r\n";
+                $messageOutput .= 'Импостер сегодня: @'.$userRand->username."\r\n";
             }
 
             $telegram->sendMessage($messageOutput, $chat->id);
