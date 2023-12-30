@@ -34,7 +34,7 @@ class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\Spac
     {
         $message = $this->behaviorMessages->implode('text','. ');
 
-        if (mb_strlen($message) < 200)
+        if (mb_strlen($message) < 40)
             return false;
 
         $open_ai = new OpenAi(config('gptapi.api_key'));
@@ -43,7 +43,7 @@ class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\Spac
             'messages' => [
                 [
                     "role" => "system",
-                    "content" => "Определи эмоцию грусти в сообщении и дай один из ответов:3 - расстроен, 2 - нейтрально, 1 - весело. Дай короткий ответ:"
+                    "content" => "Определи эмоцию в сообщении и дай один из ответов: 3 - расстроен, 2 - испуган, 1 - не испуган, 0 - не грустит. Дай короткий ответ:"
                 ],
                 [
                     "role" => "user",
@@ -73,10 +73,10 @@ class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\Spac
     protected function setBehaviorMessages()
     {
         $minAgo = time() - $this->timeAgo;
-        $lastUserMessage = Message::orderBy('message_id', 'desc')->first();
+        $lastUserMessage = Message::orderBy('id', 'desc')->first();
         $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)
             ->where('date', '>', $minAgo)
             ->where('telegram_user_id', '=', $lastUserMessage->telegram_user_id)
-            ->orderByDesc('message_id')->take(1)->get();
+            ->orderByDesc('message_id')->take(3)->get();
     }
 }

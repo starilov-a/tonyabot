@@ -72,48 +72,48 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
 
         $chats = Chat::all();
         foreach ($chats as $chat) {
-            $messageOutput = 'Я умен, так что прикинув кибер мозгами, выяснилось вот что:'."\r\n\r\n";
+//            $messageOutput = 'Я тут покумекала и вот что выяснила:'."\r\n";
 
             //подсчет кол-во сообщений
             $messages = Message::whereDate('created_at', Carbon::today())->where('chat_id', $chat->id)->get();
-            $messageOutput .= 'Сообщений за сегодня: '. $messages->count()."\r\n";
+//            $messageOutput .= 'Сообщений за сегодня: '. $messages->count()."\r\n";
 
             //топ слов
-            $messageOutput .= 'Топ слов: '."\r\n";
-            $wordStats = [];
-            foreach ($messages as $message) {
-
-                //удаление знаков припинания
-                str_replace($message->text, '',['.', '!', '?', ',', ';', ':', '(', ')', '{', '}', '[', ']', '/', '\'', '|', '%']);
-
-                $words = explode(' ', $message->text);
-
-                foreach ($words as $word){
-                    //длина слова больше 1 символа
-                    if (!(strlen($word) > 2))
-                        continue;
-
-                    //Не входит в словарь
-                    if (in_array($word,$this->dictionary))
-                        continue;
-
-                    if(!isset($wordStats[$word]))
-                        $wordStats[$word] = 0;
-                    $wordStats[$word]++;
-                }
-            }
-            if (!empty($wordStats)) {
-                arsort($wordStats);
-                $i = 0;
-                foreach ($wordStats as $word => $count) {
-                    $messageOutput .= $i+1 . '. ' . $word . ' - ' . $count ."\r\n\r\n";
-                    $i++;
-                    if ($i == 5)
-                        break;
-                }
-            } else {
-                $messageOutput .= '«Среди черных дыр и квазаров распространяется звук тишины...»'."\r\n\r\n";
-            }
+//            $messageOutput .= 'Топ слов: '."\r\n";
+//            $wordStats = [];
+//            foreach ($messages as $message) {
+//
+//                //удаление знаков припинания
+//                $message->text = str_replace($message->text, '',['.', '!', '?', ',', ';', ':', '(', ')', '{', '}', '[', ']', '/', '\'', '|', '%']);
+//
+//                $words = explode(' ', $message->text);
+//
+//                foreach ($words as $word){
+//                    //длина слова больше 1 символа
+//                    if (!(strlen($word) > 2))
+//                        continue;
+//
+//                    //Не входит в словарь
+//                    if (in_array($word,$this->dictionary))
+//                        continue;
+//
+//                    if(!isset($wordStats[$word]))
+//                        $wordStats[$word] = 0;
+//                    $wordStats[$word]++;
+//                }
+//            }
+//            if (!empty($wordStats)) {
+//                arsort($wordStats);
+//                $i = 0;
+//                foreach ($wordStats as $word => $count) {
+//                    $messageOutput .= $i+1 . '. ' . $word . ' - ' . $count ."\r\n";
+//                    $i++;
+//                    if ($i == 5)
+//                        break;
+//                }
+//            } else {
+//                $messageOutput .= '«А чо так тихо то?...»'."\r\n\r\n";
+//            }
 
 
             //самый активный участник беседы
@@ -127,17 +127,27 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
                 arsort($userTopMessage);
                 $userId = array_key_first($userTopMessage);
                 $user = TelegramUser::find($userId);
-                $messageOutput .= 'Самый активный: @'.$user->username."\r\n";
+
+                $login = '@'.$user->username;
+                if ($login == '@unknown')
+                    $login = $user->first_name;
+
+                $messageOutput .= 'Сегодня моё прощение заслужил '.$login."\r\n";
             }
 
             //Клоун беседы
 
-            $users = $chat->telegramUsers()->get();
-
-            if ($users->isNotEmpty()) {
-                $userRand = $users->random();
-                $messageOutput .= 'Импостер сегодня: @'.$userRand->username."\r\n";
-            }
+//            $users = $chat->telegramUsers()
+//                ->where('id', '!=', '777000')
+//                ->where('id', '!=', '1601276449')->get();
+//
+//            if ($users->isNotEmpty()) {
+//                $userRand = $users->random();
+//                $login = '@'.$userRand->username;
+//                if ($login == '@unknown')
+//                    $login = $userRand->first_name;
+//                $messageOutput .= 'Сегодня моё прощение заслужил '.$login."\r\n";
+//            }
 
             $telegram->sendMessage($messageOutput, $chat->id);
             $messageOutput = '';

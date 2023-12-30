@@ -26,6 +26,7 @@ class TelegramUpdates extends Telegram
         $lastUpdate = TelegramUpdate::orderBy('id', 'desc')->first();
         $offset = !empty($lastUpdate) ? $lastUpdate->id+1 : 1;
         $this->telegramUpdates = json_decode($this->http::get($this->updateWebhook.'?offset='.$offset));
+        dump($this->telegramUpdates);
         $this->saveUpdatesData();
     }
 
@@ -60,17 +61,18 @@ class TelegramUpdates extends Telegram
 
                 if (empty($chat->telegramUsers()->find($telegramUser->id)))
                     $chat->telegramUsers()->attach($telegramUser->id);
-
-                Message::firstOrCreate(['id' => $update->message->message_id],
-                    [
-                        'message_id' => $update->message->message_id,
-                        'telegram_update_id' => $update->update_id,
-                        'chat_id' => $update->message->chat->id,
-                        'telegram_user_id' => $update->message->from->id,
-                        'text' => isset($update->message->photo) ? ($update->message->caption ?? '') : $update->message->text,
-                        'date' => $update->message->date,
-                    ]
-                );
+                if (empty($update->message->forward_from_message_id)){
+                    Message::firstOrCreate(['message_id' => $update->message->message_id, 'chat_id' => $update->message->chat->id],
+                        [
+                            'message_id' => $update->message->message_id,
+                            'telegram_update_id' => $update->update_id,
+                            'chat_id' => $update->message->chat->id,
+                            'telegram_user_id' => $update->message->from->id,
+                            'text' => isset($update->message->photo) ? ($update->message->caption ?? '') : $update->message->text,
+                            'date' => $update->message->date,
+                        ]
+                    );
+                }
             }
         }
     }

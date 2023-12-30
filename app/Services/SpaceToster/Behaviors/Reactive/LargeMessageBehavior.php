@@ -39,6 +39,6 @@ class LargeMessageBehavior extends AbstarctReactiveBehavior implements \App\Serv
 
     protected function setBehaviorMessages()
     {
-        $this->behaviorMessages = Message::where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)->orderBy('message_id', 'desc')->get();
+        $this->behaviorMessages = Message::where('telegram_update_id', '>', $this->behaviorModel->telegram_update_id)->orderBy('id', 'desc')->limit(1)->get();
     }
 }

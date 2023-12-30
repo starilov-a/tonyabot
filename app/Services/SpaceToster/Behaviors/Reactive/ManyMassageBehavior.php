@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Services\SpaceToster\Behaviors\MessageBehavior
 {
     protected $code = 'manymassage';
-    protected $countTriggerMessage = 25;
+    protected $countTriggerMessage = 50;
     protected $timeAgo = 60*5;
 
     public function message(Telegram $telegram): void
@@ -31,10 +31,10 @@ class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Servi
 
     protected function setBehaviorMessages()
     {
-        $lastUserMessage = Message::orderBy('message_id', 'desc')->first();
+        $lastUserMessage = Message::orderBy('id', 'desc')->first();
         $minAgo = time() - $this->timeAgo;
         $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)
-            ->where('date', '>', $minAgo)->orderByDesc('message_id')->limit($this->countTriggerMessage + 1)->get();
+            ->where('date', '>', $minAgo)->orderByDesc('id')->limit($this->countTriggerMessage + 1)->get();
     }
 
     protected function refreshCooldown($update_id): void

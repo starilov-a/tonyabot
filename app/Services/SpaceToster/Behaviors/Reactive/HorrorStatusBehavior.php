@@ -33,7 +33,7 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
     protected function checkLogic(): bool
     {
         $message = $this->behaviorMessages->implode('text','. ');
-        if (mb_strlen($message) < 200)
+        if (mb_strlen($message) < 40)
             return false;
 
         $open_ai = new OpenAi(config('gptapi.api_key'));
@@ -42,7 +42,7 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
             'messages' => [
                 [
                     "role" => "system",
-                    "content" => "Определи эмоцию страха и дай один из ответов:3 - страшно, 2 - тревожно, 1 - нейтрально. Дай короткий ответ:"
+                    "content" => "Определи эмоцию и дай один из ответов: 3 - страшно, 2 - расстроен, 1 - не успуган, 0 - не расстроен. Дай короткий ответ:"
                 ],
                 [
                     "role" => "user",
@@ -74,7 +74,7 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
     protected function setBehaviorMessages()
     {
         $minAgo = time() - $this->timeAgo;
-        $lastUserMessage = Message::orderBy('message_id', 'desc')->first();
+        $lastUserMessage = Message::orderBy('id', 'desc')->first();
         $this->behaviorMessages = Message::where('chat_id', '=', $lastUserMessage->chat_id)
             ->where('date', '>', $minAgo)
             ->where('telegram_user_id', '=', $lastUserMessage->telegram_user_id)
