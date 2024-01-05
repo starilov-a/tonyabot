@@ -4,15 +4,20 @@
 namespace App\Services\SpaceToster\Behaviors\Reactive;
 
 
-use App\Models\Message;
-use App\Services\SpaceToster\Behaviors\Behavior;
 use App\Services\SpaceToster\Behaviors\MessageBehavior;
+use App\Services\SpaceToster\Cooldowns\CooldownStandart;
 use App\Services\Telegram;
 
 class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
 {
     protected $code = 'da';
     private $dictionary = ['да','да.','да?','da','da.','da?'];
+
+    public function __construct()
+    {
+        $this->setCooldown(new CooldownStandart($this));
+        parent::__construct();
+    }
 
     public function message(Telegram $telegram): void
     {
@@ -32,7 +37,7 @@ class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
             }
         }
         $telegram->sendMessage($messageOutput, $chat, $message_id);
-        $this->refreshCooldown($update_id);
+        $this->cooldown->refreshCooldown($update_id);
     }
 
     protected function checkLogic(): bool

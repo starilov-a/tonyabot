@@ -5,6 +5,7 @@ namespace App\Services\SpaceToster\Behaviors\Reactive;
 
 
 use App\Models\Message;
+use App\Services\SpaceToster\Cooldowns\CooldownStandart5Min;
 use App\Services\Telegram;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,12 +15,19 @@ class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Servi
     protected $countTriggerMessage = 50;
     protected $timeAgo = 60*5;
 
+    public function __construct()
+    {
+        $this->setCooldown(new CooldownStandart5Min($this));
+        parent::__construct();
+    }
+
     public function message(Telegram $telegram): void
     {
         $video = Storage::disk('local')->get('public/media/videos/wtf.mp4');
         $chat_id = $this->behaviorMessages->first()->chat_id;
+        $update_id = $this->behaviorMessages->first()->telegram_update_id;;
         $telegram->sendVideo($video,'sueta.mp4', $chat_id);
-        $this->refreshCooldown($chat_id);
+        $this->cooldown->refreshCooldown($update_id);
     }
 
     protected function checkLogic(): bool

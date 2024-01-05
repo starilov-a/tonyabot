@@ -7,12 +7,12 @@ namespace App\Services\SpaceToster\Behaviors\Passive;
 use App\Models\Chat;
 use App\Models\Message;
 use App\Models\TelegramUser;
-use App\Services\SpaceToster\Behaviors\Behavior;
 use App\Services\SpaceToster\Behaviors\MessageBehavior;
+use App\Services\SpaceToster\Cooldowns\CooldownDailyStatus;
 use App\Services\Telegram;
 use Carbon\Carbon;
 
-class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements MessageBehavior
+class DailyStatisticBehavior extends AbstractPassiveBehavior implements MessageBehavior
 {
     protected $code = 'dailystat';
     protected $workHour = 19;
@@ -64,6 +64,12 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
         "столькое", "столькие", "мне",
         //другое
     ];
+
+    public function __construct()
+    {
+        $this->setCooldown(new CooldownDailyStatus($this, 19));
+        parent::__construct();
+    }
 
     public function message(Telegram $telegram): void
     {
@@ -135,25 +141,11 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
                 $messageOutput .= 'Сегодня моё прощение заслужил '.$login."\r\n";
             }
 
-            //Клоун беседы
-
-//            $users = $chat->telegramUsers()
-//                ->where('id', '!=', '777000')
-//                ->where('id', '!=', '1601276449')->get();
-//
-//            if ($users->isNotEmpty()) {
-//                $userRand = $users->random();
-//                $login = '@'.$userRand->username;
-//                if ($login == '@unknown')
-//                    $login = $userRand->first_name;
-//                $messageOutput .= 'Сегодня моё прощение заслужил '.$login."\r\n";
-//            }
-
             $telegram->sendMessage($messageOutput, $chat->id);
             $messageOutput = '';
         }
 
-        $this->refreshCooldown(0);
+        $this->cooldown->refreshCooldown($messages->last()->telegram_update_id, 0);
     }
 
     protected function checkLogic(): bool
@@ -161,10 +153,6 @@ class DailyStatisticBehavior extends AbstractStaticPassiveBehavior implements Me
         $dt = Carbon::now();
         if ($this->behaviorModel->status && $dt->hour == $this->workHour)
             return $this->checkLogicStatus = true;
-        //TODO перенести сброс кулдауна
-        if ($dt->hour == $this->refreshHour && !$this->behaviorModel->status)
-            $this->refreshCooldown(1);
-
         return false;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Services\SpaceToster\Behaviors\Reactive;
 
 
 use App\Models\Message;
+use App\Services\SpaceToster\Cooldowns\CooldownStandart5Min;
 use App\Services\Telegram;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,12 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
 {
     protected $code = 'horrorstatus';
     protected $timeAgo = 30;
+
+    public function __construct()
+    {
+        $this->setCooldown(new CooldownStandart5Min($this));
+        parent::__construct();
+    }
 
     public function message(Telegram $telegram): void
     {
@@ -27,7 +34,7 @@ class HorrorStatusBehavior extends AbstarctReactiveBehavior implements \App\Serv
         $telegram->sendVideo($video,'tryska.mp4', $chat_id);
 
         $update_id = $lastMessage->telegram_update_id;
-        $this->refreshCooldown($update_id);
+        $this->cooldown->refreshCooldown($update_id);
     }
 
     protected function checkLogic(): bool

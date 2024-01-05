@@ -29,7 +29,7 @@ abstract class AbstarctReactiveBehavior extends \App\Services\SpaceToster\Behavi
 
     public function reasonToMessage(): bool
     {
-        if (!$this->checkCooldown())
+        if (!$this->cooldown->checkCooldown())
             return false;
         if (!$this->checkIssetMessages())
             return false;

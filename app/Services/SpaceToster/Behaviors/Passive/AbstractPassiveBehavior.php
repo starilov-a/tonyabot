@@ -8,8 +8,13 @@ use App\Services\SpaceToster\Behaviors\Behavior;
 
 abstract class AbstractPassiveBehavior extends Behavior
 {
-    protected function refreshCooldown($status): void
+    public function reasonToMessage(): bool
     {
-        $this->behaviorModel->update(['date' => time(), 'status' => $status]);
+        if (!$this->cooldown->checkCooldown())
+            return false;
+        if (!$this->checkLogic())
+            return false;
+
+        return true;
     }
 }

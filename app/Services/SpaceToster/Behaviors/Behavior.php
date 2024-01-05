@@ -4,12 +4,13 @@
 namespace App\Services\SpaceToster\Behaviors;
 
 
-use App\Models\Message;
-use App\Services\Telegram;
+use App\Services\SpaceToster\Cooldowns\CooldownDefault;
+use App\Services\SpaceToster\Cooldowns\InterfaceCooldownStrategy;
 
 abstract class Behavior
 {
     protected $code = 'behavior';
+    protected InterfaceCooldownStrategy $cooldown;
     protected $behaviorModel;
     protected $behaviorMessages;
     protected $checkLogicStatus = false;
@@ -18,19 +19,12 @@ abstract class Behavior
     public function __construct()
     {
         $this->behaviorModel = \App\Models\Behavior::where('code', $this->code)->first();
+        if (empty($cooldown))
+            $this->setCooldown(new CooldownDefault($this));
     }
 
-    protected function checkCooldown(): bool
-    {
-        if (time() > ($this->behaviorModel->date + $this->behaviorModel->cooldown))
-            return true;
-
-        return false;
-    }
-
-    protected function refreshCooldown($update_id): void
-    {
-        $this->behaviorModel->update(['date' => time(), 'telegram_update_id' => $update_id]);
+    protected function setCooldown(InterfaceCooldownStrategy $cooldown) {
+        $this->cooldown = $cooldown;
     }
 
     abstract protected function checkLogic(): bool;

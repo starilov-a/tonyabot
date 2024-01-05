@@ -5,6 +5,7 @@ namespace App\Services\SpaceToster\Behaviors\Reactive;
 
 
 use App\Models\Message;
+use App\Services\SpaceToster\Cooldowns\CooldownStandart5Min;
 use App\Services\Telegram;
 use Illuminate\Support\Facades\Log;
 use Orhanerday\OpenAi\OpenAi;
@@ -14,6 +15,12 @@ class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\Spac
 
     protected $code = 'cryman';
     protected $timeAgo = 30;
+
+    public function __construct()
+    {
+        $this->setCooldown(new CooldownStandart5Min($this));
+        parent::__construct();
+    }
 
     public function message(Telegram $telegram): void
     {
@@ -27,7 +34,7 @@ class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\Spac
         $update_id = $lastMessage->telegram_update_id;
 
         $telegram->sendMessage($messageOutput, $chat);
-        $this->refreshCooldown($update_id);
+        $this->cooldown->refreshCooldown($update_id);
     }
 
     protected function checkLogic(): bool

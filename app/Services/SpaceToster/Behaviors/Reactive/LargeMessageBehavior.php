@@ -5,12 +5,19 @@ namespace App\Services\SpaceToster\Behaviors\Reactive;
 
 
 use App\Models\Message;
+use App\Services\SpaceToster\Cooldowns\CooldownStandart;
 use App\Services\Telegram;
 
 class LargeMessageBehavior extends AbstarctReactiveBehavior implements \App\Services\SpaceToster\Behaviors\MessageBehavior
 {
 
     protected $code = 'largemessage';
+
+    public function __construct()
+    {
+        $this->setCooldown(new CooldownStandart($this));
+        parent::__construct();
+    }
 
     protected function checkLogic(): bool
     {
@@ -34,7 +41,7 @@ class LargeMessageBehavior extends AbstarctReactiveBehavior implements \App\Serv
         $update_id = $userMessage->telegram_update_id;
 
         $telegram->sendMessage($messageOutput, $chat, $message_id);
-        $this->refreshCooldown($update_id);
+        $this->cooldown->refreshCooldown($update_id);
     }
 
     protected function setBehaviorMessages()
