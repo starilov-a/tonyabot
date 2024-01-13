@@ -58,6 +58,12 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'cooldowns' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/cooldowns.log'),
+            'replace_placeholders' => true,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => ['single'],

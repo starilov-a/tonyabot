@@ -4,6 +4,8 @@
 namespace App\Services\SpaceToster\Cooldowns;
 
 
+use Illuminate\Support\Facades\Log;
+
 class CooldownStandart extends AbstractCooldown implements InterfaceCooldownStrategy
 {
 
@@ -24,6 +26,8 @@ class CooldownStandart extends AbstractCooldown implements InterfaceCooldownStra
             //7 дней 10%
             $cooldown = 60*60*24*7;
         }
+
+        Log::channel('cooldowns')->info('Cooldown:"' . $cooldown);
 
         if (time() > ($this->behavior->date + $cooldown))
             return true;
