@@ -4,7 +4,7 @@
 namespace App\Services\SpaceToster\Cooldowns;
 
 
-use App\Services\SpaceToster\Behaviors\Behavior;
+use App\Models\Behavior;
 
 abstract class AbstractCooldown
 {
