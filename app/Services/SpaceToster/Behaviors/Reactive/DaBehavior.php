@@ -15,7 +15,7 @@ class DaBehavior extends AbstarctReactiveBehavior implements MessageBehavior
 
     public function __construct()
     {
-        $this->setCooldown(new CooldownStandart($this));
+        $this->setCooldown(new CooldownStandart($this->getBehaviorModel()));
         parent::__construct();
     }
 

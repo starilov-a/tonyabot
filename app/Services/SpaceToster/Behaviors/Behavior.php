@@ -27,5 +27,9 @@ abstract class Behavior
         $this->cooldown = $cooldown;
     }
 
+    public function getBehaviorModel() {
+        return $this->behaviorModel;
+    }
+
     abstract protected function checkLogic(): bool;
 }

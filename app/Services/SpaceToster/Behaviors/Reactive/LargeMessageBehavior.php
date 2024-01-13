@@ -15,7 +15,7 @@ class LargeMessageBehavior extends AbstarctReactiveBehavior implements \App\Serv
 
     public function __construct()
     {
-        $this->setCooldown(new CooldownStandart($this));
+        $this->setCooldown(new CooldownStandart($this->getBehaviorModel()));
         parent::__construct();
     }
 

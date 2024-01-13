@@ -17,7 +17,7 @@ class ManyMassageBehavior extends AbstarctReactiveBehavior implements \App\Servi
 
     public function __construct()
     {
-        $this->setCooldown(new CooldownStandart5Min($this));
+        $this->setCooldown(new CooldownStandart5Min($this->getBehaviorModel()));
         parent::__construct();
     }
 

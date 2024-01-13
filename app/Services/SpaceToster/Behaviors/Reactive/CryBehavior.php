@@ -18,7 +18,7 @@ class CryBehavior extends AbstarctReactiveBehavior implements \App\Services\Spac
 
     public function __construct()
     {
-        $this->setCooldown(new CooldownStandart5Min($this));
+        $this->setCooldown(new CooldownStandart5Min($this->getBehaviorModel()));
         parent::__construct();
     }
 
